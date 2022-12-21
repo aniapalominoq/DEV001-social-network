@@ -1,5 +1,5 @@
 import {
-  collection, getDocs, query, doc, getDoc, addDoc, deleteDoc, updateDoc, setDoc, where,
+  collection, onSnapshot, getDocs, query, doc, getDoc, addDoc, orderBy, deleteDoc, updateDoc, setDoc, where,
 } from 'firebase/firestore';
 import { db } from '../firebase.js';
 
@@ -11,8 +11,8 @@ querySnapshot.forEach((doc) => {
   console.log(`${doc.id} => ${doc.data()}`);
 }); */
 
-export const saveCollectionPostDoc = (uid, text, file, likes = 0, nComments = 0) => addDoc(collection(db, 'posts'), {
-  uid, text, file, likes, nComments,
+export const saveCollectionPostDoc = (uid, text, file, date, likes = 0, nComments = 0) => addDoc(collection(db, 'posts'), {
+  uid, text, file, likes, nComments, date,
 });
 
 export const readCollectionUserDoc = (IdDocUser) => {
@@ -20,7 +20,12 @@ export const readCollectionUserDoc = (IdDocUser) => {
   return getDoc(docRef);
 };
 
- export const readCollectionPost= (IdDocPost) => {
+export const readCollectionPost = (IdDocPost) => {
   const docRef = doc(db, 'posts', IdDocPost);
   return getDoc(docRef);
+};
+
+export const readAllCollectionPosts = (callback) => {
+  const q = query(collection(db, 'posts'), orderBy('date', 'asc'));
+  return onSnapshot(q, callback);
 };
