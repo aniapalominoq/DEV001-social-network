@@ -17,9 +17,9 @@ export const Wall = (onNavigate) => {
 
     <section class="container-addPost">
         <div class="container-imgProfile">
-            <img class="container-imgProfile__img" src="${currentUser().photoURL}">
+            <img class="container-imgProfile__img" src="${currentUser() ? currentUser().photoURL : 0}">
         </div>
-        <div class="container-addPost__text" id="addPost" >What are you thinking, ${currentUser().displayName} ?</div>
+        <div class="container-addPost__text" id="addPost" >What are you thinking, ${currentUser() ? currentUser().displayName : 'usuario'}? </div>
    </section>
 
    <section class='container-Posts'>
@@ -30,23 +30,36 @@ export const Wall = (onNavigate) => {
 
   console.log('soy currentUser en wall', currentUser());
 
-  $section.addEventListener('click', (e) => {
+  showAllPosts((posts) => {
+    $section.querySelector('.container-Posts').innerHTML = '';
+    posts.forEach((post) => {
+      $section.querySelector('.container-Posts').insertAdjacentElement('afterbegin', Posts(post.data(), post.id));
+    });
+  });
+
+  const $addPostElement = $section.querySelector('.container-addPost__text');
+
+  $addPostElement.addEventListener('click', (e) => {
     e.preventDefault();
     console.log('target:', e.target);
-
-    console.log('id', e.target.getAttribute('id'));
 
     if (e.target.getAttribute('id') === 'addPost') {
       AddPost();
     }
   });
 
-  showAllPosts((posts) => {
-    $section.querySelector('.container-Posts').innerHTML = '';
-    posts.forEach((post) => {
-      $section.querySelector('.container-Posts').insertAdjacentElement('afterbegin', Posts(post.data()));
-    });
-  });
+  /*  const idPost=e.target.getAttribute('id');
+console.log(e.target.getAttribute('class'));
+
+    if (e.target.getAttribute('çlass') === 'container-headerPost__options') {
+      deletePost(idPost).then(() => {
+        alert('your post deleted successfully');
+      })
+        .catch((error) => {
+          alert(' Uh-oh, an error occurred!');
+        });
+    }
+    console.log('class', e.target.getAttribute('class'));  */
 
   const root = document.getElementById('root');
   root.appendChild(Menu());
