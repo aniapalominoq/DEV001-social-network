@@ -1,7 +1,7 @@
 import { currentUser } from '../lib_firebase/auth.js';
 import { deletePost } from '../controller/posts_controller';
 
-export const Posts = (post, postId) => {
+export const Posts = (post, postId, postOwner) => {
   const $section = document.createElement('div');
   $section.className = 'container-Posts__Post';
   $section.id = postId;
@@ -10,8 +10,8 @@ export const Posts = (post, postId) => {
    
         <div class="container-headerPost">
           <div class="container-user">
-            <img  class='container-user__imgUser'src="${currentUser().photoURL}">
-            <p class='container-user__nameUser'> ${currentUser().displayName} </p>
+            <img  class='container-user__imgUser'src="${postOwner.imgProfile}">
+            <p class='container-user__nameUser'> ${postOwner.name} </p>
           </div>
           <button id='${postId}' class="container-headerPost__options">
             <img class='container-headerPost__hamburguerIcon' src="https://raw.githubusercontent.com/JENNYFERGAMBOA/DEV001-social-network/main/src/assets/img/icon_delete.png">
@@ -19,7 +19,7 @@ export const Posts = (post, postId) => {
         </div>
         <div class='container-content'>
               <div  class='container-content__textPost'>
-              <p>${post.text}</p> 
+              <p class='container-AddPost__title_text'>${post.text}</p> 
               </div>
               <div class='container-content__imgPost'>
               <img class='container-content__imgPost-img' src="${post.file}">

@@ -2,18 +2,28 @@ import { currentUser } from '../lib_firebase/auth.js';
 import { Menu } from './Menu.js';
 import { AddPost } from './AddPost';
 import { Posts } from './Posts.js';
-import { showAllPosts, subscribedUser } from '../controller/wall_controller';
+import { showAllPosts, postOwner, subscribedUser } from '../controller/wall_controller';
 
 /* const currentUser = subscribedUser((user) => {
   console.log('suscribedUser en wall', user);
   return user;
 }); */
 
-//console.log('retorna suscribedUser en wall', currentUser());
+// console.log('retorna suscribedUser en wall', currentUser());
+
+/* subscribedUser((user) => {
+  if (user) {
+    console.log('suscribedUser en wall', user);
+    $section.querySelector('.container-imgProfile__img')
+
+  }
+}); */
 
 export const Wall = () => {
   const $section = document.createElement('section');
   $section.className = 'container container-wall';
+
+  // console.log('suscribedUser en wall', user);
   $section.innerHTML = `
     <header class="container-header">
         <img class="container-header__logo" src="https://raw.githubusercontent.com/JENNYFERGAMBOA/DEV001-social-network/main/src/assets/img/logo_horizontal.png
@@ -24,7 +34,7 @@ export const Wall = () => {
         <div class="container-imgProfile">
             <img class="container-imgProfile__img" src='${currentUser() ? currentUser().photoURL : 0}'>
         </div>
-        <div class="container-addPost__text" id="addPost" >What are you thinking, ${currentUser() ? currentUser().displayName : 'usuario'}? </div>
+        <div class="container-addPost__text" id="addPostBlock" >What are you thinking, ${currentUser() ? currentUser().displayName : 'usuario'}? </div>
    </section>
 
    <section class='container-Posts'>
@@ -38,7 +48,16 @@ export const Wall = () => {
   showAllPosts((posts) => {
     $section.querySelector('.container-Posts').innerHTML = '';
     posts.forEach((post) => {
-      $section.querySelector('.container-Posts').insertAdjacentElement('afterbegin', Posts(post.data(), post.id));
+      const idPostOwner = post.data().uid;
+      postOwner(idPostOwner)
+        .then((docPostOwner) => {
+          $section.querySelector('.container-Posts').insertAdjacentElement('afterbegin', Posts(post.data(), post.id, docPostOwner.data()));
+          console.log('soy docPostOwner en wall', docPostOwner.data());
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          console.log('Error en obtener el id del propietario del post', errorCode);
+        });
     });
   });
 
@@ -46,10 +65,13 @@ export const Wall = () => {
 
   $addPostElement.addEventListener('click', (e) => {
     e.preventDefault();
-    console.log('target:', e.target);
+    console.log('escucha para agregar un post:', e.target);
 
-    if (e.target.getAttribute('id') === 'addPost') {
+    if (e.target.getAttribute('id') === 'addPostBlock') {
+      console.log('click para agregar un post:', e.target);
       AddPost();
+      const $AddPost = document.getElementById('addPostModal');
+      $AddPost.style.display = 'block';
     }
   });
 

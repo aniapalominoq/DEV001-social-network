@@ -1,6 +1,5 @@
 import { registerTasks, registerGoopgleTasks } from '../controller/register_controller.js';
 import { validateEmail, validateName, validatePassword } from '../helpers';
-
 import { readCollectionUserDoc } from '../lib_firebase/db';
 import { Modal } from './Modal.js';
 
@@ -145,8 +144,8 @@ export const Register = (onNavigate) => {
     e.preventDefault();
 
     registerGoopgleTasks()
-      .then((userDoc) => {
-        console.log('register - userDoc GOOGLE', userDoc.id);
+      .then(() => {
+        console.log('registerGoopgleTasks');
 
         onNavigate('/wall');
       })
