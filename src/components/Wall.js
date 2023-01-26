@@ -1,29 +1,19 @@
-import { currentUser } from '../lib_firebase/auth.js';
+import { doc, getDoc } from 'firebase/firestore';
 import { Menu } from './Menu.js';
 import { AddPost } from './AddPost';
 import { Posts } from './Posts.js';
-import { showAllPosts, postOwner, subscribedUser } from '../controller/wall_controller';
-
-/* const currentUser = subscribedUser((user) => {
-  console.log('suscribedUser en wall', user);
-  return user;
-}); */
-
-// console.log('retorna suscribedUser en wall', currentUser());
-
-/* subscribedUser((user) => {
-  if (user) {
-    console.log('suscribedUser en wall', user);
-    $section.querySelector('.container-imgProfile__img')
-
-  }
-}); */
+import { showAllPosts } from '../controller/wall_controller';
+import { db } from '../firebase.js';
 
 export const Wall = () => {
   const $section = document.createElement('section');
   $section.className = 'container container-wall';
 
-  // console.log('suscribedUser en wall', user);
+  // console.log('userState en wall', user);
+  // const uid = localStorage.getItem('uid');
+  const uName = localStorage.getItem('uName');
+  const uImgProfile = localStorage.getItem('uImgProfile');
+
   $section.innerHTML = `
     <header class="container-header">
         <img class="container-header__logo" src="https://raw.githubusercontent.com/JENNYFERGAMBOA/DEV001-social-network/main/src/assets/img/logo_horizontal.png
@@ -32,9 +22,9 @@ export const Wall = () => {
 
     <section class="container-addPost">
         <div class="container-imgProfile">
-            <img class="container-imgProfile__img" src='${currentUser() ? currentUser().photoURL : 0}'>
+            <img class="container-imgProfile__img" src='${uImgProfile}'>
         </div>
-        <div class="container-addPost__text" id="addPostBlock" >What are you thinking, ${currentUser() ? currentUser().displayName : 'usuario'}? </div>
+        <div class="container-addPost__text" id="addPostBlock" >What are you thinking, ${uName}? </div>
    </section>
 
    <section class='container-Posts'>
@@ -43,21 +33,23 @@ export const Wall = () => {
   
    `;
 
-  console.log('soy currentUser en wall', currentUser());
-
   showAllPosts((posts) => {
     $section.querySelector('.container-Posts').innerHTML = '';
+    const allPosts = [];
+    const promises = [];
+    posts.forEach((post) => allPosts.push(post));
     posts.forEach((post) => {
       const idPostOwner = post.data().uid;
-      postOwner(idPostOwner)
-        .then((docPostOwner) => {
-          $section.querySelector('.container-Posts').insertAdjacentElement('afterbegin', Posts(post.data(), post.id, docPostOwner.data()));
-          console.log('soy docPostOwner en wall', docPostOwner.data());
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          console.log('Error en obtener el id del propietario del post', errorCode);
-        });
+      const docRef = doc(db, 'users', idPostOwner);
+      promises.push(getDoc(docRef));
+    });
+    Promise.all(promises).then((values) => {
+      allPosts.forEach((post, i) => {
+        $section.querySelector('.container-Posts').insertAdjacentElement('afterbegin', Posts(post.data(), post.id, values[i].data()));
+      });
+    }).catch((error) => {
+      const errorCode = error.code;
+      console.log('Error en obtener el id del propietario del post', errorCode);
     });
   });
 

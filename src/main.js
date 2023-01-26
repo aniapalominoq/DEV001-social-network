@@ -3,7 +3,7 @@ import { Welcome } from './components/Welcome.js';
 import { Login } from './components/Login.js';
 import { Register } from './components/Register.js';
 import { Wall } from './components/Wall.js';
-//import { subscribedUser } from './controller/wall_controller';
+// import { subscribedUser } from './controller/wall_controller';
 // import { currentUser, user } from './lib_firebase/auth.js';
 
 const root = document.getElementById('root');
@@ -27,7 +27,7 @@ window.onpopstate = () => {
   root.append(components(onNavigate));
 };
 
-
+root.appendChild(components(onNavigate));
 
 /* subscribedUser((user) => {
   if (user) {
@@ -42,4 +42,3 @@ window.onpopstate = () => {
   }
 });
  */
-root.appendChild(components(onNavigate));
