@@ -1,4 +1,4 @@
-<img src="https://github.com/aniapalominoq/DEV001-social-network/blob/main/src/assets/img/logo_horizontal.png" width=800 height=100 alt="logo de la pagina"/>
+<img src="https://github.com/aniapalominoq/DEV001-social-network/blob/main/src/assets/img/logo_horizontal.png" width=800 height=250 alt="logo de la pagina"/>
 
 ---
 
